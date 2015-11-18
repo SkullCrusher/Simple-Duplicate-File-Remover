@@ -67,12 +67,10 @@ private: void Insert_Not_Root(T InsertObject, int key, Node* Argument = NULL, in
 
 			Node *ForceRebalance = Update_BF_Leaf(Argument->Left_Child); //Update the balance.
 			Balance(ForceRebalance); //Rebalancing if required.
-		}
-		else{
+		}else{
 			Insert_Not_Root(InsertObject, key, Argument->Left_Child, height + 1);
 		}
-	}
-	else{
+	}else{
 		//If null put it into that node else follow it.
 		if (Argument->Right_Child == NULL){
 			Argument->Right_Child = Temp;
@@ -661,8 +659,8 @@ int main(){
 	AVL_TREE.Insert(Random_String, 3);
 	AVL_TREE.Debugging_Tool_Dump("1.txt");
 	
-	AVL_TREE.Insert(Random_String, 13);
-	AVL_TREE.Debugging_Tool_Dump("2.txt");
+//	AVL_TREE.Insert(Random_String, 13);
+//	AVL_TREE.Debugging_Tool_Dump("2.txt");
 	/*AVL_TREE.Insert(Random_String, 6);
 	AVL_TREE.Debugging_Tool_Dump("3.txt");
 	AVL_TREE.Insert(Random_String, 5);
