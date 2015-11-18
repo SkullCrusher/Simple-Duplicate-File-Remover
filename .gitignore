@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+*.tlog
+Remove Duplicate Files/Debug/Remove Duplicate Files.log
+*.pdb
+*.idb
+*.ilk
