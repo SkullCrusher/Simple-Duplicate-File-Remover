@@ -1,15 +1,4 @@
-﻿/*#include <iostream>
-
-
-int main(int argc, char* argv[]) {
-	
-
-
-	return 0;
-}*/
-
-
-//David Harkins
+﻿//David Harkins
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -41,6 +30,22 @@ class AVL_Binary_Tree{
 		}
 	};
 
+private: void Delete_Tree(Node* Argument){
+
+	if (Argument != NULL){
+
+		Delete_Tree(Argument->Left_Child);
+		Delete_Tree(Argument->Right_Child);
+
+		delete Argument;
+	}
+
+}
+
+public: ~AVL_Binary_Tree(){
+	Delete_Tree(Root);
+}
+
 private: Node* Root; //The root pointer.
 
 		 //Default constructor.
@@ -50,29 +55,47 @@ public:	AVL_Binary_Tree(){
 
 		//If the item is not root, or first child of root.
 private: void Insert_Not_Root(T InsertObject, int key, Node* Argument = NULL, int height = 1){
-
+	/*
 	//The thing we are inserting
 	Node* Temp = new Node();
 
 	Temp->Parent = Argument;
 	Temp->key = key;
 	Temp->Data = InsertObject;
-	Temp->Height = height;
+	Temp->Height = height;*/
 
 	//Insert elsewhere			
 	if (Argument->key > key){
 		//If null put it into that node else follow it.
 		if (Argument->Left_Child == NULL){
+
+			Node* Temp = new Node();
+
+			Temp->Parent = Argument;
+			Temp->key = key;
+			Temp->Data = InsertObject;
+			Temp->Height = height;
+
 			Argument->Left_Child = Temp;
 
 			Node *ForceRebalance = Update_BF_Leaf(Argument->Left_Child); //Update the balance.
 			Balance(ForceRebalance); //Rebalancing if required.
-		}else{
+		}
+		else{
 			Insert_Not_Root(InsertObject, key, Argument->Left_Child, height + 1);
 		}
-	}else{
+	}
+	else{
 		//If null put it into that node else follow it.
 		if (Argument->Right_Child == NULL){
+
+			Node* Temp = new Node();
+
+			Temp->Parent = Argument;
+			Temp->key = key;
+			Temp->Data = InsertObject;
+			Temp->Height = height;
+
 			Argument->Right_Child = Temp;
 
 			Node *ForceRebalance = Update_BF_Leaf(Argument->Right_Child); //Update the balance.
@@ -103,44 +126,45 @@ private: Node* Update_BF_Leaf(Node* Argument = NULL){
 		 //Insert a new item.
 public:	void Insert(T InsertObject, int key){
 
-	//The thing we are inserting
-	Node* Temp = new Node();
-
-	Temp->Parent = Root;
-	Temp->key = key;
-	Temp->Data = InsertObject;
-	Temp->Height = 0;
-
 	//If the tree is empty
 	if (Root == NULL){
 		Root = new Node();
 
 		Root->key = key;
 		Root->Data = InsertObject;
-
 	}
 	else{
-
-		Temp->Height = 1;
 
 		//Insert elsewhere			
 		if (Root->key > key){
 			//If null put it into that node else follow it.
 			if (Root->Left_Child == NULL){
-				Root->Left_Child = Temp;
-			}else{
-				delete Temp;
+				Node* Temp = new Node();
 
+				Temp->Parent = Root;
+				Temp->key = key;
+				Temp->Data = InsertObject;
+				Temp->Height = 1;
+
+				Root->Left_Child = Temp;
+			}
+			else{
 				Insert_Not_Root(InsertObject, key, Root);
 			}
 		}
 		else{
 			//If null put it into that node else follow it.
 			if (Root->Right_Child == NULL){
-				Root->Right_Child = Temp;
-			}else{
-				delete Temp;
+				Node* Temp = new Node();
 
+				Temp->Parent = Root;
+				Temp->key = key;
+				Temp->Data = InsertObject;
+				Temp->Height = 1;
+
+				Root->Right_Child = Temp;
+			}
+			else{
 				Insert_Not_Root(InsertObject, key, Root);
 			}
 		}
@@ -650,7 +674,7 @@ public: void Debugging_Tool_Dump(std::string Filename){
 }
 };
 
-int main(){
+int main(int argc, char* argv[]) {
 
 	AVL_Binary_Tree<std::string> AVL_TREE;
 
@@ -658,12 +682,12 @@ int main(){
 
 	AVL_TREE.Insert(Random_String, 3);
 	AVL_TREE.Debugging_Tool_Dump("1.txt");
-	
-//	AVL_TREE.Insert(Random_String, 13);
-//	AVL_TREE.Debugging_Tool_Dump("2.txt");
-	/*AVL_TREE.Insert(Random_String, 6);
+
+	AVL_TREE.Insert(Random_String, 13);
+	AVL_TREE.Debugging_Tool_Dump("2.txt");
+	AVL_TREE.Insert(Random_String, 6);
 	AVL_TREE.Debugging_Tool_Dump("3.txt");
-	AVL_TREE.Insert(Random_String, 5);
+	/*AVL_TREE.Insert(Random_String, 5);
 	AVL_TREE.Debugging_Tool_Dump("4.txt");
 	AVL_TREE.Insert(Random_String, 12);
 	AVL_TREE.Debugging_Tool_Dump("5.txt");
