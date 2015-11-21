@@ -19,7 +19,7 @@ class AVL_Binary_Tree{
 		//The balance of the node.
 		int Height;
 
-		int key;
+		long long key;
 		T Data; //The data contained by the node.
 
 		Node(){
@@ -34,29 +34,29 @@ class AVL_Binary_Tree{
 
 	private: void Delete_Tree(Node* Argument){
 
-	if (Argument != NULL){
+		if (Argument != NULL){
 
-		Delete_Tree(Argument->Left_Child);
-		Delete_Tree(Argument->Right_Child);
+			Delete_Tree(Argument->Left_Child);
+			Delete_Tree(Argument->Right_Child);
 
-		delete Argument;
+			delete Argument;
+		}
+
 	}
 
-}
-
 	public: ~AVL_Binary_Tree(){
-	Delete_Tree(Root);
-}
+		Delete_Tree(Root);
+	}
 
 	private: Node* Root; //The root pointer.
 
 		 //Default constructor.
 	public:	AVL_Binary_Tree(){
-	Root = NULL;
-}
+		Root = NULL;
+	}
 
 		//If the item is not root, or first child of root.
-	private: void Insert_Not_Root(T InsertObject, int key, Node* Argument = NULL, int height = 1){
+	private: void Insert_Not_Root(T InsertObject, long long key, Node* Argument = NULL, int height = 1){
 	/*
 	//The thing we are inserting
 	Node* Temp = new Node();
@@ -126,7 +126,7 @@ class AVL_Binary_Tree{
 }
 
 		 //Insert a new item.
-	public:	void Insert(T InsertObject, int key){
+	public:	void Insert(T InsertObject, long long key){
 
 	//If the tree is empty
 	if (Root == NULL){
@@ -397,7 +397,7 @@ class AVL_Binary_Tree{
 }
 
 		 //Find the type and spit it out (or provide the node link).
-	public: Node* Find_Element(int key, T &Result, Node* Search_Node = NULL){
+	public: Node* Find_Element(long long key, T &Result, Node* Search_Node = NULL){
 
 	if (Search_Node == NULL){
 		Search_Node = Root;
@@ -619,7 +619,7 @@ class AVL_Binary_Tree{
 }
 
 		 //Delete a node by the key.
-	public:	void Delete(int key){
+	public:	void Delete(long long key){
 
 	//I don't actually need TempTemp's data I just need it so call find_element
 	std::string TempTemp;
