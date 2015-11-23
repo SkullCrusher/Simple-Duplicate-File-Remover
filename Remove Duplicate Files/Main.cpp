@@ -22,9 +22,8 @@ std::wstring s2ws(const std::string& s){
 	return r;
 }
 
-	
+	// Generate the SHA512 by filename, (only accepts ascii or will return empty.)
 std::string GenerateFileSHA512(std::string argument);
-
 
 	// Contains the information about a file.
 struct File_Info{
@@ -34,24 +33,28 @@ struct File_Info{
 	
 	long long Size = 0;
 
+		// Compare the two objects.
 	friend bool operator == (File_Info& x, File_Info& y) {
 
-		//Compare the two objects.
-
-		//Check if x has hash of the file.
+			// Check if x has hash of the file.
 		if (x.HASH == ""){
 			//Generate the hash because it is not there.
 			x.HASH = GenerateFileSHA512(x.FilePath);
 		}
 
-		//Check if y has hash of the file.
+			// Check if y has hash of the file.
 		if (y.HASH == ""){
 			//Generate the hash because it is not there.
 			y.HASH = GenerateFileSHA512(y.FilePath);
 		}
 
+			/* Special case, if one of them is a empty hash then we know it was 
+			   unable to load the file so we assume it is not duplicate to prevent data loss. */
+		if (x.HASH == "" || y.HASH == ""){
+			return false;
+		}
 
-		//Compare the hashes to see if they match.
+			// Compare the hashes to see if they match.
 		if (x.HASH == y.HASH){
 			return true;
 		}else{
@@ -60,10 +63,8 @@ struct File_Info{
 	}
 };
 
-
-
 	// Searched the for folders and files based off the first folder in the std::vector<std::string> &Folder
-void Collect_Files(std::vector<std::string> &Folders, std::vector<std::string> &Files, AVL_Binary_Tree<File_Info> &AVL_Tree){
+void Collect_Files(std::vector<std::string> &Folders, std::vector<File_Info> &Files, AVL_Binary_Tree<File_Info> &AVL_Tree){
 
 	for (unsigned int i = 0; i < Folders.size(); i++){
 
@@ -129,25 +130,25 @@ void Collect_Files(std::vector<std::string> &Folders, std::vector<std::string> &
 				}
 		
 			} while (FindNextFile(hFind, &ffd) != 0);
-			//FindClose(hFind);
+		
 		}else{
 			// Report failure.
 		}
 
+			// Clean up.
+		FindClose(hFind);
+
 	}
 
 	
-
-
 	//remove(Files[g].c_str());
-
-
+	
 	//FindClose(hFind);
-
 }
 
 	// Load file by full path and return a pointer to a char *str or null.
 char *LoadFileByName(std::string argument){
+
 	std::streampos size;
 	char * memblock;
 
@@ -163,7 +164,7 @@ char *LoadFileByName(std::string argument){
 		//cout << "the entire file content is in memory";
 		//delete[] memblock;
 	}else{
-		return 0;
+		return NULL;
 		//cout << "Unable to open file";
 	}
 
@@ -176,6 +177,11 @@ std::string GenerateFileSHA512(std::string argument){
 		//Load the file into memory.
 	char *File_test = LoadFileByName(argument.c_str());
 	
+	if (File_test == NULL){
+		return "";
+	}
+
+
 	std::string output = sha512(File_test);
 
 		//We don't need it anymore.
@@ -184,24 +190,26 @@ std::string GenerateFileSHA512(std::string argument){
 	return output;
 }
 
-
-	
 int main(int argc, char* argv[]) {
 
-
-		//Debugging.
-	//std::string AA = GenerateFileSHA512("C:\\a\\c.exe");
-
+		//Testing.
 	AVL_Binary_Tree<File_Info> AVL_TREE;
 
-	// Folders
+		// Folders (used for removing empty folders.)
 	std::vector<std::string> Folders;
 
-	std::vector<std::string> Files;
+		// Used to hold the duplicate files found.
+	std::vector<File_Info> Files;
 
-	Folders.push_back("C:\\a");
+	Folders.push_back("C:\\b");
 
 	Collect_Files(Folders, Files, AVL_TREE);
+
+
+	//For debugging
+	for (int i = 0; i < Files.size(); i++){
+		remove(Files[i].FilePath.c_str());
+	}
 
 		
 	return 0;
