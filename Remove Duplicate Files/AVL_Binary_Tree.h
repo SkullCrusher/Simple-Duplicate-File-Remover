@@ -20,7 +20,7 @@ class AVL_Binary_Tree{
 		int Height;
 
 		long long key;
-		T Data; //The data contained by the node.
+		std::vector<T> Data; //The data contained by the node.
 
 		Node(){
 			//Null out the pointers.
@@ -56,38 +56,59 @@ class AVL_Binary_Tree{
 	}
 
 		//If the item is not root, or first child of root.
-	private: void Insert_Not_Root(T InsertObject, long long key, Node* Argument = NULL, int height = 1){
-	/*
-	//The thing we are inserting
-	Node* Temp = new Node();
+private: void Insert_Not_Root(T InsertObject, long long key, std::vector<std::string> &Duplicate_Files, Node* Argument = NULL, int height = 1){
 
-	Temp->Parent = Argument;
-	Temp->key = key;
-	Temp->Data = InsertObject;
-	Temp->Height = height;*/
+	//We check if the size if equal then check against the vector.
+		//was here, change it to check the vector if it is more then one.
+
+	if (Argument->key == key){
+
+		bool Matched = false;
+
+		//Loop through every element in the node.
+		for (unsigned int i = 0; i < Argument->Data.size(); i++){
+
+			//We compare the data to see if they
+			if (Argument->Data[i] == InsertObject){
+
+				//Debug?
+				int debug = 0;
+				here
+			}
+
+		}
+
+
+		
+
+		return;
+	}
+
 
 	//Insert elsewhere			
 	if (Argument->key > key){
 		//If null put it into that node else follow it.
 		if (Argument->Left_Child == NULL){
+					
 
 			Node* Temp = new Node();
 
 			Temp->Parent = Argument;
 			Temp->key = key;
-			Temp->Data = InsertObject;
+			//Temp->Data = InsertObject;
+			Temp->Data.push_back(InsertObject);
+
 			Temp->Height = height;
 
 			Argument->Left_Child = Temp;
 
 			Node *ForceRebalance = Update_BF_Leaf(Argument->Left_Child); //Update the balance.
 			Balance(ForceRebalance); //Rebalancing if required.
+		}else{
+			Insert_Not_Root(InsertObject, key, Duplicate_Files, Argument->Left_Child, height + 1);
 		}
-		else{
-			Insert_Not_Root(InsertObject, key, Argument->Left_Child, height + 1);
-		}
-	}
-	else{
+	}else{
+
 		//If null put it into that node else follow it.
 		if (Argument->Right_Child == NULL){
 
@@ -95,16 +116,17 @@ class AVL_Binary_Tree{
 
 			Temp->Parent = Argument;
 			Temp->key = key;
-			Temp->Data = InsertObject;
+			//Temp->Data = InsertObject;
+			Temp->Data.push_back(InsertObject);
+
 			Temp->Height = height;
 
 			Argument->Right_Child = Temp;
 
 			Node *ForceRebalance = Update_BF_Leaf(Argument->Right_Child); //Update the balance.
 			Balance(ForceRebalance);  //Rebalancing if required.
-		}
-		else{
-			Insert_Not_Root(InsertObject, key, Argument->Right_Child, height + 1);
+		}else{
+			Insert_Not_Root(InsertObject, key, Duplicate_Files, Argument->Right_Child, height + 1);
 		}
 	}
 }
@@ -126,54 +148,59 @@ class AVL_Binary_Tree{
 }
 
 		 //Insert a new item.
-	public:	void Insert(T InsertObject, long long key){
+	public:	void Insert(T InsertObject, long long key, std::vector<std::string> &Duplicate_Files){
 
-	//If the tree is empty
-	if (Root == NULL){
-		Root = new Node();
+		//If the tree is empty
+		if (Root == NULL){
+			Root = new Node();
 
-		Root->key = key;
-		Root->Data = InsertObject;
-	}
-	else{
+			Root->key = key;
+			//Root->Data = InsertObject;
+			Root->Data.push_back(InsertObject);
+		}else{
 
-		//Insert elsewhere			
-		if (Root->key > key){
-			//If null put it into that node else follow it.
-			if (Root->Left_Child == NULL){
-				Node* Temp = new Node();
+			//Check if the root and the file are the same size.
+		//	was here
 
-				Temp->Parent = Root;
-				Temp->key = key;
-				Temp->Data = InsertObject;
-				Temp->Height = 1;
+			//Insert elsewhere			
+			if (Root->key > key){
+				//If null put it into that node else follow it.
+				if (Root->Left_Child == NULL){
+					Node* Temp = new Node();
 
-				Root->Left_Child = Temp;
-			}
-			else{
-				Insert_Not_Root(InsertObject, key, Root);
+					Temp->Parent = Root;
+					Temp->key = key;
+					//Temp->Data = InsertObject;
+
+					Temp->Data.push_back(InsertObject);
+					Temp->Height = 1;
+
+					Root->Left_Child = Temp;
+				}else{
+					Insert_Not_Root(InsertObject, key, Duplicate_Files, Root);
+				}
+			}else{
+				//If null put it into that node else follow it.
+				if (Root->Right_Child == NULL){
+					Node* Temp = new Node();
+
+					Temp->Parent = Root;
+					Temp->key = key;
+					//Temp->Data = InsertObject;
+					Temp->Data.push_back(InsertObject);
+
+
+					Temp->Height = 1;
+
+					Root->Right_Child = Temp;
+				}else{
+					Insert_Not_Root(InsertObject, key, Duplicate_Files, Root);
+				}
 			}
 		}
-		else{
-			//If null put it into that node else follow it.
-			if (Root->Right_Child == NULL){
-				Node* Temp = new Node();
 
-				Temp->Parent = Root;
-				Temp->key = key;
-				Temp->Data = InsertObject;
-				Temp->Height = 1;
-
-				Root->Right_Child = Temp;
-			}
-			else{
-				Insert_Not_Root(InsertObject, key, Root);
-			}
-		}
+		return;
 	}
-
-	return;
-}
 
 		//Used by Balance factor to find the depth of a sub tree.
 	private: int Find_Height(Node * Argument = NULL, int height_arg = 0){

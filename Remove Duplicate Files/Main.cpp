@@ -1,16 +1,15 @@
 ﻿//David Harkins
-
 #include "AVL_Binary_Tree.h"
 
 #include "sha2.h"
 
-#include <iostream>
 #include <fstream>
 #include <windows.h>
 #include <sstream>
 #include <vector>
 
 
+	// Convert the string to wide string.
 std::wstring s2ws(const std::string& s){
 
 	int len;
@@ -23,17 +22,48 @@ std::wstring s2ws(const std::string& s){
 	return r;
 }
 
-	//
+	
+std::string GenerateFileSHA512(std::string argument);
+
+
+	// Contains the information about a file.
 struct File_Info{
 
 	std::string HASH = "";
 	std::string FilePath = "";
 	
 	long long Size = 0;
+
+	friend bool operator == (File_Info& x, File_Info& y) {
+
+		//Compare the two objects.
+
+		//Check if x has hash of the file.
+		if (x.HASH == ""){
+			//Generate the hash because it is not there.
+			x.HASH = GenerateFileSHA512(x.FilePath);
+		}
+
+		//Check if y has hash of the file.
+		if (y.HASH == ""){
+			//Generate the hash because it is not there.
+			y.HASH = GenerateFileSHA512(y.FilePath);
+		}
+
+
+		//Compare the hashes to see if they match.
+		if (x.HASH == y.HASH){
+			return true;
+		}else{
+			return false;
+		}
+	}
 };
 
-	//Searched the for folders and files based off the first folder in the std::vector<std::string> &Folder
-void Collect_Files(std::vector<std::string> &Folders, AVL_Binary_Tree<File_Info> &AVL_Tree){
+
+
+	// Searched the for folders and files based off the first folder in the std::vector<std::string> &Folder
+void Collect_Files(std::vector<std::string> &Folders, std::vector<std::string> &Files, AVL_Binary_Tree<File_Info> &AVL_Tree){
 
 	for (unsigned int i = 0; i < Folders.size(); i++){
 
@@ -95,7 +125,7 @@ void Collect_Files(std::vector<std::string> &Folders, AVL_Binary_Tree<File_Info>
 
 
 					//filesize.QuadPart
-					AVL_Tree.Insert(Temp, filesize.QuadPart);
+					AVL_Tree.Insert(Temp, filesize.QuadPart, Files);
 				}
 		
 			} while (FindNextFile(hFind, &ffd) != 0);
@@ -116,7 +146,7 @@ void Collect_Files(std::vector<std::string> &Folders, AVL_Binary_Tree<File_Info>
 
 }
 
-	//Load file by full path and return a pointer to a char *str or null.
+	// Load file by full path and return a pointer to a char *str or null.
 char *LoadFileByName(std::string argument){
 	std::streampos size;
 	char * memblock;
@@ -140,47 +170,39 @@ char *LoadFileByName(std::string argument){
 	return memblock;
 }
 
+	// Use file path to load a file and SHA512 it and return it.
+std::string GenerateFileSHA512(std::string argument){
 
+		//Load the file into memory.
+	char *File_test = LoadFileByName(argument.c_str());
+	
+	std::string output = sha512(File_test);
+
+		//We don't need it anymore.
+	delete File_test; 
+
+	return output;
+}
+
+
+	
 int main(int argc, char* argv[]) {
 
-	std::string input = "grape";
-	std::string output4 = sha512(input);
-	std::cout << "sha512('" << input << "'):" << output4 << std::endl;
 
-
-	char *File_test = LoadFileByName("C:\\a\\cview.7z");
+		//Debugging.
+	//std::string AA = GenerateFileSHA512("C:\\a\\c.exe");
 
 	AVL_Binary_Tree<File_Info> AVL_TREE;
 
-	//folders
+	// Folders
 	std::vector<std::string> Folders;
+
+	std::vector<std::string> Files;
 
 	Folders.push_back("C:\\a");
 
-	Collect_Files(Folders, AVL_TREE);
+	Collect_Files(Folders, Files, AVL_TREE);
 
-
-	/*
-
-	std::string Random_String = "Some random data";
-
-	AVL_TREE.Insert(Random_String, 3);
-	AVL_TREE.Insert(Random_String, 13);	
-	AVL_TREE.Insert(Random_String, 6);
-	AVL_TREE.Insert(Random_String, 5);
-	AVL_TREE.Insert(Random_String, 12);
-	AVL_TREE.Insert(Random_String, 7);
-	AVL_TREE.Insert(Random_String, 9);
-	AVL_TREE.Insert(Random_String, 10);
-	AVL_TREE.Insert(Random_String, 4);
-	AVL_TREE.Insert(Random_String, 8);
-	AVL_TREE.Insert(Random_String, 11);
-	AVL_TREE.Insert(Random_String, 14);
-	
-	AVL_TREE.Delete(6);
-	AVL_TREE.Delete(7);
-
-	*/
-	
+		
 	return 0;
 }
