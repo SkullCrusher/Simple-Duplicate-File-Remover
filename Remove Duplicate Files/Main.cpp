@@ -190,6 +190,10 @@ std::string GenerateFileSHA512(std::string argument){
 	return output;
 }
 
+void Print_Useage(){
+
+}
+
 int main(int argc, char* argv[]) {
 
 		//Testing.

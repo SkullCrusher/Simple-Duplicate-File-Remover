@@ -150,7 +150,7 @@ class AVL_Binary_Tree{
 		return NULL; //We don't need to rebalance this node.
 	}
 
-		// Insert a new item.
+		// Insert a new item at the root.
 	public:	void Insert(T &InsertObject, long long key, std::vector<T> &Duplicate_Files){
 
 		// If the tree is empty
@@ -163,7 +163,27 @@ class AVL_Binary_Tree{
 		}else{
 
 			// Check if the root and the file are the same size.
-			//	was here
+			if (Root->key == key){
+
+				// Loop through every element in the node.
+				for (unsigned int i = 0; i < Root->Data.size(); i++){
+
+					// We compare the data to see if they
+					if (Root->Data[i] == InsertObject){
+
+						Duplicate_Files.push_back(InsertObject);
+
+						return;
+					}
+				}
+
+				// A match was not found so add to the list.
+				Root->Data.push_back(InsertObject);
+
+
+
+				return;
+			}
 
 			// Insert elsewhere			
 			if (Root->key > key){
@@ -179,8 +199,7 @@ class AVL_Binary_Tree{
 					Temp->Height = 1;
 
 					Root->Left_Child = Temp;
-				}
-				else{
+				}else{
 					Insert_Not_Root(InsertObject, key, Duplicate_Files, Root);
 				}
 			}else{
