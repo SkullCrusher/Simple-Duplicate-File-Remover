@@ -212,6 +212,26 @@ bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump
 
 		if (argv[i] == "-D"){
 			Delete = true;
+			continue;
+		}
+
+		if (argv[i] == "-S"){
+			Show_Infomation = true;
+			continue;
+		}
+
+		if (argv[i] == "-L"){			
+
+				//Make sure there is another argument.
+			if ((argc - i) >= 1){
+				Dump_To_File = true;
+
+				Path_To_Search = argv[i + 1];
+				i++; //Skip the path argument.
+			}else{
+					//No path provided.
+				return false;
+			}
 		}
 		
 	}
