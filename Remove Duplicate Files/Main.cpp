@@ -190,13 +190,76 @@ std::string GenerateFileSHA512(std::string argument){
 	return output;
 }
 
-void Print_Useage(){
+	// To help people by printing out how to use the tool.
+void Print_Usage(){
 
+	printf("Written by David Harkins.\n");
+	printf("Usage:\n\n");
+	printf("  -D Delete the duplicates.\n");
+	printf("  -L Dump all the duplicates to a list.\n");
+	printf("  -S Show extra information about the search.\n\n");
+	printf("Example: -D -L <Path> -S <Path to folder to check>\n");
+
+}
+
+bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump_To_File, std::string &Dump_To_File_Path, bool &Delete, std::string &Path_To_Search){
+
+		// Loop through the arguments.
+	for (int i = 1; i < argc; i++){
+
+		printf(argv[i]);
+		printf("\n");
+
+		if (argv[i] == "-D"){
+			Delete = true;
+		}
+		
+	}
+
+		// The folder is always last.
+	Path_To_Search = argv[argc - 1];
+
+
+	return true;
 }
 
 int main(int argc, char* argv[]) {
 
-		//Testing.
+		// Only valid combinations require at least 2 arguments.
+	if (argc == 1){
+
+		Print_Usage();
+		
+		return 1;
+	}
+
+	std::string Path_To_Search = "";
+
+		// Shows information about duplicate files.
+	bool Show_Infomation = false;
+
+		// Should a file be created with duplicate files.
+	bool Dump_To_File = false;
+
+		// Where the file should be dumped to.
+	std::string Dump_To_File_Path = "";
+
+		// Should the files.
+	bool Delete = false;
+
+
+		//Process the arguments.
+	if (!Process_Arguments(argc, argv, Show_Infomation, Dump_To_File, Dump_To_File_Path, Delete, Path_To_Search)){
+
+			//Invalid use of the command line.
+		Print_Usage();
+
+		return 2;
+	}
+	
+ 
+
+		// The tree for sorting file sizes.
 	AVL_Binary_Tree<File_Info> AVL_TREE;
 
 		// Folders (used for removing empty folders.)
@@ -205,15 +268,26 @@ int main(int argc, char* argv[]) {
 		// Used to hold the duplicate files found.
 	std::vector<File_Info> Files;
 
-	Folders.push_back("C:\\b");
 
+		//Push the root directory onto the stack.
+	Folders.push_back("C:\\b");
+	
+
+
+		//Collect the files and sort them into the avl tree.
 	Collect_Files(Folders, Files, AVL_TREE);
 
+		// Delete all of the files.
+	if (Delete){
 
-	//For debugging
-	for (int i = 0; i < Files.size(); i++){
-		remove(Files[i].FilePath.c_str());
+		printf("Deleting %d files.\n", Files.size());
+
+			// Delete selected file.
+		for (int i = 0; i < Files.size(); i++){
+			remove(Files[i].FilePath.c_str());
+		}
 	}
+
 
 		
 	return 0;
