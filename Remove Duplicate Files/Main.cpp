@@ -156,19 +156,11 @@ void Collect_Files(std::vector<std::string> &Folders, std::vector<File_Info> &Fi
 		
 			} while (FindNextFile(hFind, &ffd) != 0);
 		
-		}else{
-			// Report failure.
 		}
 
 			// Clean up.
 		FindClose(hFind);
-
 	}
-
-	
-	//remove(Files[g].c_str());
-	
-	//FindClose(hFind);
 }
 
 	// Load file by full path and return a pointer to a char *str or null.
@@ -186,11 +178,8 @@ char *LoadFileByName(std::string argument){
 		file.read(memblock, size);
 		file.close();
 
-		//cout << "the entire file content is in memory";
-		//delete[] memblock;
 	}else{
 		return NULL;
-		//cout << "Unable to open file";
 	}
 
 	return memblock;
