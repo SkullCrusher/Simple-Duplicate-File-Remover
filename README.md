@@ -13,7 +13,7 @@
   Example (2): -D <Path to folder to check>
       - Deletes the duplicates.
       
-  Example (3): -L <Path> <Path to folder to check?
+  Example (3): -L <Path> <Path to folder to check>
       - Saves the duplicates to a file of the location Path.
 
 
