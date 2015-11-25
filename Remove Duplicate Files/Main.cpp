@@ -1,4 +1,29 @@
-﻿//David Harkins
+﻿/*
+
+	Written by David Harkins,
+
+	Simple Duplicate File Remover:
+	Copyright (C) 2015 David Harkins
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation;  version 2 of the License, or 
+	any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+	Github: https://github.com/SkullCrusher/Simple-Duplicate-File-Remover
+	
+*/
+
 #include "AVL_Binary_Tree.h"
 
 #include "sha2.h"
@@ -202,31 +227,31 @@ void Print_Usage(){
 
 }
 
+	// Turns the arguments into usable data.
 bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump_To_File, std::string &Dump_To_File_Path, bool &Delete, std::string &Path_To_Search){
 
 		// Loop through the arguments.
 	for (int i = 1; i < argc; i++){
 
-		printf(argv[i]);
-		printf("\n");
-
-		if (argv[i] == "-D"){
+		if (argv[i][0] == '-' && argv[i][1] == 'D'){
 			Delete = true;
 			continue;
 		}
 
-		if (argv[i] == "-S"){
+
+		if (argv[i][0] == '-' && argv[i][1] == 'S'){
 			Show_Infomation = true;
 			continue;
 		}
 
-		if (argv[i] == "-L"){			
+	
+		if (argv[i][0] == '-' && argv[i][1] == 'L'){
 
 				//Make sure there is another argument.
 			if ((argc - i) >= 1){
 				Dump_To_File = true;
 
-				Path_To_Search = argv[i + 1];
+				Dump_To_File_Path = argv[i + 1];
 				i++; //Skip the path argument.
 			}else{
 					//No path provided.
@@ -242,6 +267,7 @@ bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump
 
 	return true;
 }
+
 
 int main(int argc, char* argv[]) {
 
@@ -278,7 +304,6 @@ int main(int argc, char* argv[]) {
 	}
 	
  
-
 		// The tree for sorting file sizes.
 	AVL_Binary_Tree<File_Info> AVL_TREE;
 
@@ -290,17 +315,55 @@ int main(int argc, char* argv[]) {
 
 
 		//Push the root directory onto the stack.
-	Folders.push_back("C:\\b");
+	Folders.push_back(Path_To_Search.c_str());
 	
+		//Display the starting directory, if the user wants output.
+	if (Show_Infomation){
+		printf("Starting search of %s.\n", Path_To_Search.c_str());
+	}
 
 
 		//Collect the files and sort them into the avl tree.
 	Collect_Files(Folders, Files, AVL_TREE);
+	
+		//Show the information about the search, if the user wants output.
+	if (Show_Infomation){
+		long long Total_Duplicate_Size = 0;
+
+		for (unsigned int i = 0; i < Files.size(); i++){
+			Total_Duplicate_Size += Files[i].Size;
+		}
+
+		printf("Duplicates Found %u, totaling %lld bytes.\n", Files.size(), Total_Duplicate_Size);
+
+	}
+
+		// Should the duplicates be dumped to a file.
+	if (Dump_To_File && Files.size() > 0){
+
+		// If the user wants output.
+		if (Show_Infomation){
+			printf("Logging duplicate file names to file \"%s\"\n", Dump_To_File_Path.c_str());
+		}
+
+		std::ofstream Duplicate_Log;
+		Duplicate_Log.open(Dump_To_File_Path.c_str());
+
+		for (unsigned int i = 0; i < Files.size(); i++){
+			Duplicate_Log << Files[i].FilePath << "\n";
+		}
+
+		Duplicate_Log.close();
+
+	}
 
 		// Delete all of the files.
-	if (Delete){
+	if (Delete && Files.size() > 0){
 
-		printf("Deleting %d files.\n", Files.size());
+			// If the user wants output.
+		if (Show_Infomation){
+			printf("Deleting %d files.\n", Files.size());
+		}
 
 			// Delete selected file.
 		for (int i = 0; i < Files.size(); i++){
@@ -308,7 +371,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-
-		
+	printf("Finished: Be beware the robot overlords, they do not forgive the non-metallic.\n");
+			
 	return 0;
 }
