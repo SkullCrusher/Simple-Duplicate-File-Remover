@@ -19,8 +19,8 @@
 
   Please note:
   
-    This only runs on 64 bit machines.
-      To patch this to run on 32 bit you will have to replace the variable type of long long with 
+    I only tested this on 64 bit machines.
+      You may need to patch this to run on 32 bit. If so you will have to replace the variable type of long long with 
       something of your choosing. Also the AVL tree will have to be changed to handle the new variable.
       
     The operating system this was made for was Windows.
