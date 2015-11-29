@@ -210,30 +210,47 @@ void Print_Usage(){
 	printf("Written by David Harkins.\n");
 	printf("Usage:\n\n");
 	printf("  -D Delete the duplicates.\n");
-	printf("  -L Dump all the duplicates to a list.\n");
-	printf("  -S Show extra information about the search.\n\n");
+	printf("  -L <Path> Dump all the duplicates to a list.\n");
+	printf("  -S Show extra information about the search.\n");
+	printf("  -B <Path> Use a folder filled with known files to find duplicates.\n\n");
 	printf("Example: -D -L <Path> -S <Path to folder to check>\n");
 
 }
 
 	// Turns the arguments into usable data.
-bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump_To_File, std::string &Dump_To_File_Path, bool &Delete, std::string &Path_To_Search){
+bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump_To_File, std::string &Dump_To_File_Path, bool &Delete, std::string &Path_To_Search, bool &UseKnownBad, std::string &KnownBad_Path){
 
 		// Loop through the arguments.
 	for (int i = 1; i < argc; i++){
 
+			// Delete the duplicates. "-D"
 		if (argv[i][0] == '-' && argv[i][1] == 'D'){
 			Delete = true;
 			continue;
 		}
 
-
+			// Show information. "-S"
 		if (argv[i][0] == '-' && argv[i][1] == 'S'){
 			Show_Infomation = true;
 			continue;
 		}
 
-	
+			// Bad files list. "-B Path"
+		if (argv[i][0] == '-' && argv[i][1] == 'B'){
+
+			//Make sure there is another argument.
+			if ((argc - i) >= 1){
+				UseKnownBad = true;
+
+				KnownBad_Path = argv[i + 1];
+				i++; //Skip the path argument.
+			}else{
+				//No path provided.
+				return false;
+			}
+		}
+			
+			// Dump a list of duplicates. "-L Path"
 		if (argv[i][0] == '-' && argv[i][1] == 'L'){
 
 				//Make sure there is another argument.
@@ -260,6 +277,8 @@ bool Process_Arguments(int argc, char* argv[], bool &Show_Infomation, bool &Dump
 
 int main(int argc, char* argv[]) {
 
+	Print_Usage();
+
 		// Only valid combinations require at least 2 arguments.
 	if (argc == 1){
 
@@ -282,9 +301,23 @@ int main(int argc, char* argv[]) {
 		// Should the files.
 	bool Delete = false;
 
+		/* 
+			How bad file lists work are direct the duplicate remover to a folder and it will create the tree based off that. 
+
+				- If the item is on the tree it will delete from the path it is checking else do nothing to that file.
+
+				- It only will add to the tree from the known bad file list and not allow new ones to be inserted.
+		
+		*/
+	bool UseKnownBad = false;
+
+		// The path to the file files we don't want.
+	std::string KnownBad_Path = "";
+
+
 
 		//Process the arguments.
-	if (!Process_Arguments(argc, argv, Show_Infomation, Dump_To_File, Dump_To_File_Path, Delete, Path_To_Search)){
+	if (!Process_Arguments(argc, argv, Show_Infomation, Dump_To_File, Dump_To_File_Path, Delete, Path_To_Search, UseKnownBad, KnownBad_Path)){
 
 			//Invalid use of the command line.
 		Print_Usage();
